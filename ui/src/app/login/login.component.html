@@ -1,0 +1,34 @@
+<section>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="Login-block panel" id="loginblock" *ngIf="showblock">
+        <div class="panel-head">
+          <h4 class="login-title">User Login</h4>
+        </div>
+        <div class="panel-body">
+          <form autocomplete="off" role="form" [formGroup]="loginForm" (ngSubmit)="login()" id="loginform">
+            <div class="alert alert-warning" *ngIf="loading">
+              {{message}}
+            </div>
+
+            <div class="form-group">
+              <input autocomplete="off" type="text" class="form-control" id="exampleInputEmail1" formControlName="email"
+                placeholder="Username" required>
+              <control-messages [control]="loginForm.controls.email"></control-messages>
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" id="exampleInputPassword1" formControlName="password"
+                placeholder="Password" required>
+              <control-messages [control]="loginForm.controls.password"></control-messages>
+            </div>
+            <div class="text-right">
+              <button type="submit" [disabled]="!loginForm.valid" class="btn btn-primary">Login</button>
+            </div>
+          </form>
+
+          <span><a href="#" class="btn-link">Forgot your password?</a></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,198 @@
+<div class="container-fluid" style="margin-top:1%;"></div>
+<div class="panel panel-primary" style="margin:15px 15px 0 15px;">
+  <div class="panel-heading">
+
+  </div>
+  <div class="panel-body">
+    <div class="emp-div">
+      <div class="Emp-div">
+        <button type="button" data-toggle="modal" data-target="#addEmp" class="btn btn-info btn-sm"><i class="fas fa-user-plus"></i>
+          Employee</button>
+      </div>
+      <div class="input-group col-2 float-right p-0" style="position:relative;">
+        <input type="text" class="form-control" aria-label="Search" placeholder="Search" (input)="searchBy()"
+          [(ngModel)]="search" />
+        <div class="input-group-append" style="position:absolute;right:0px;top:2px;z-index: 3;">
+          <div class="input-group-text" style="background-color:transparent; border: none;">
+            <i *ngIf="!search" class="fas fa-search"></i>
+            <i *ngIf="search" class="fas fa-times" (click)='search="";employee=emp;'></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="table-responsive">
+      <table class="table table-sm table-striped" id="empTable">
+        <thead>
+          <tr>
+            <th scope="col"><label class="float-left">Employee Id</label>
+              <div class="px-2 float-left" (click)="sortBy('id')">
+                <i [ngClass]="{'sort': sort == 'empId' && sortType == 'asc' }" class="fas fa-sort-up" id="sort-asc"></i>
+                <i [ngClass]="{'sort': sort == 'empId' && sortType == 'des' }" class="fas fa-sort-down" id="sort-desc"></i>
+              </div>
+            </th>
+            <th scope="col"><label class="float-left">Name</label>
+              <div class="px-2 float-left" (click)="sortBy('employee_name')">
+                <i [ngClass]="{'sort': sort == 'name' && sortType == 'asc' }" class="fas fa-sort-up" id="sort-asc"></i>
+                <i [ngClass]="{'sort': sort == 'name' && sortType == 'des' }" class="fas fa-sort-down" id="sort-desc"></i>
+              </div>
+            </th>
+            <th scope="col"><label class="float-left">Salary</label>
+              <div class="px-2 float-left" (click)="sortBy('employee_salary')">
+                <i [ngClass]="{'sort': sort == 'salary' && sortType == 'asc' }" class="fas fa-sort-up" id="sort-asc"></i>
+                <i [ngClass]="{'sort': sort == 'salary' && sortType == 'des' }" class="fas fa-sort-down" id="sort-desc"></i>
+              </div>
+            </th>
+            <th scope="col"><label class="float-left">Age</label>
+              <div class="px-2 float-left" (click)="sortBy('employee_age')">
+                <i [ngClass]="{'sort': sort == 'age' && sortType == 'asc' }" class="fas fa-sort-up" id="sort-asc"></i>
+                <i [ngClass]="{'sort': sort == 'age' && sortType == 'des' }" class="fas fa-sort-down" id="sort-desc"></i>
+              </div>
+            </th>
+            <th scope="col"><label class="float-left">Action</label>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let emp of employee | paginate: { id: 'paginate-document',itemsPerPage: pageSelectedValue,currentPage: p}">
+            <tr>
+              <th scope="row">{{emp.id}}</th>
+              <td>{{emp.employee_name}}</td>
+              <td>{{emp.employee_salary}}</td>
+              <td>{{emp.employee_age}}</td>
+              <td>
+                <span class="icon"><a class="point" data-toggle="modal" data-target="#updateEmp" (click)="fetchDetails(emp.id)">
+                    <span class="mdi mdi-account-edit" data-toggle="tooltip" data-placement="top" title="Edit"></span></a></span>
+
+                <span class="icon"><a class="point" id="del" (click)="deleteEmp(emp.id)" data-toggle="modal"
+                    data-target="#addEmpSuccess">
+                    <span class="mdi mdi-delete" data-toggle="tooltip" data-placement="top" title="Delete"></span></a>
+                </span>
+              </td>
+            </tr>
+          </ng-container>
+          <tr *ngIf="employee.length == 0">
+            <td colspan="5" style="text-align:center">No data available</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="paginationPanel">
+        <div class="col-8 tables_length" id="table_length">
+          <label>Show
+            <span class="entries-list pl-2 pr-2">
+              <select [(ngModel)]="pageSelectedValue" name="table_length" aria-controls="dashboardtable" class="custom-select custom-select-sm form-control-sm"
+                (change)="pageShowValue($event)">
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select></span>
+            entries
+            <div class="col-lg tables_info" id="table_info" role="status" aria-live="polite">Showing 1 to
+              {{pageSelectedValue}} of {{employee.length}} entries
+            </div>
+          </label>
+        </div>
+
+        <div class="col-4 text-center">
+          <pagination-controls class="pagination" id="paginate-document" (pageChange)="p = $event">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Emp Modal -->
+<div class="modal fade" id="addEmp" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Employee</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form autocomplete="off" role="form" [formGroup]="addEmpForm" id="addEmpForm">
+          <div class="form-group">
+            <input id="emp-name" autocomplete="off" type="text" class="form-control" formControlName="empName"
+              placeholder="Employee Name" required>
+            <control-messages [control]="addEmpForm.controls.empName"></control-messages>
+          </div>
+          <div class="form-group">
+            <input id="emp-salary" autocomplete="off" type="text" class="form-control" formControlName="empSalary"
+              placeholder="Employee Salary" required>
+            <control-messages [control]="addEmpForm.controls.empSalary"></control-messages>
+          </div>
+          <div class="form-group">
+            <input id="emp-age" autocomplete="off" type="text" class="form-control" formControlName="empAge"
+              placeholder="Employee Age" required>
+            <control-messages [control]="addEmpForm.controls.empAge"></control-messages>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" [disabled]="!addEmpForm.valid" id="notoggle" (click)="createEmp()" class="btn btn-primary"
+          data-dismiss="modal" data-toggle="modal" data-target="#addEmpSuccess">Save</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Update Emp Modal -->
+<div class="modal fade" id="updateEmp" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel3">Update Employee</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form autocomplete="off" role="form" [formGroup]="updateEmpForm" id="updateEmpForm">
+          <div class="form-group">
+            <input id="emp_name" autocomplete="off" type="text" class="form-control" formControlName="empName"
+              placeholder="Employee Name" [(ngModel)]="empName" [value]="empName" required>
+            <!-- <control-messages [control]="updateEmpForm.controls.emp_name"></control-messages> -->
+          </div>
+          <div class="form-group">
+            <input id="emp_salary" autocomplete="off" type="text" class="form-control" formControlName="empSalary"
+              placeholder="Employee Salary" [(ngModel)]="empSalary" [value]="empSalary" required>
+            <!-- <control-messages [control]="updateEmpForm.controls.emp_salary"></control-messages> -->
+          </div>
+          <div class="form-group">
+            <input id="emp_age" autocomplete="off" type="text" class="form-control" formControlName="empAge"
+              placeholder="Employee Age" [(ngModel)]="empAge" [value]="empAge" required>
+            <!-- <control-messages [control]="updateEmpForm.controls.emp_age"></control-messages> -->
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" id="notoggle" (click)="updateEmp()" class="btn btn-primary" data-dismiss="modal"
+          data-toggle="modal" data-target="#addEmpSuccess">Update</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- On success Emp CRUD Modal -->
+<div class="modal fade" id="addEmpSuccess" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel1">{{msg}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="text-align:center">
+        <i class='fa fa-check-circle faa-tada animated fa-6x' style="color: #54bd54"></i>
+      </div>
+    </div>
+  </div>
+</div>
