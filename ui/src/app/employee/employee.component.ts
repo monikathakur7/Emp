@@ -55,7 +55,7 @@ export class EmployeeComponent implements OnInit {
       this.emp = this.employee;
     },
     err=>{
-      
+      alert(err.message);
     });
   }
 
@@ -175,7 +175,7 @@ export class EmployeeComponent implements OnInit {
       }
     },
     err=>{
-      
+      alert(err.message);
     });
   }
 
@@ -190,7 +190,7 @@ export class EmployeeComponent implements OnInit {
       }
     },
     err => {
-
+      alert(err.message);
     }); 
   }
 
@@ -202,7 +202,7 @@ export class EmployeeComponent implements OnInit {
       this.empId =res['id'];
     },
     err => {
-
+      alert(err.message);
     }); 
   }
 
@@ -225,7 +225,7 @@ export class EmployeeComponent implements OnInit {
       }
     },
     err => {
-
+      alert(err.message);
     }); 
   }
 
