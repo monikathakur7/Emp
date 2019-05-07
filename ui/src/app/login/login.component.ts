@@ -52,6 +52,7 @@ export class LoginComponent implements OnInit {
     
     this.loginService.login(data).subscribe(res => {
         if(res){
+          this.navdiv.style.display = "block";
           this.router.navigate(["employee"]);
         }
         else{
@@ -59,11 +60,12 @@ export class LoginComponent implements OnInit {
         }
     },
     err=>{
-     
+      console.log(err);
+      
+      alert(err);
     });
 
-    this.navdiv.style.display = "block";
-
+    
   }
 
 }
